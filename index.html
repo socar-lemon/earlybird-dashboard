@@ -442,6 +442,35 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}thead th{text-align:l
   </div>
 </div>
 
+<!-- Daily Trend Charts -->
+<div class="section">
+  <div class="sec-head">
+    <h2>일별 생성 추이</h2>
+    <span class="tag tag-blue">DAILY TREND</span>
+    <span class="sec-sub">생성일 기준 | 일별 누적 갱신</span>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">일별 생성 건수 (쿠폰별)</div>
+      <div class="chart-box"><canvas id="ncCntChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">일별 Net 매출 (백만원)</div>
+      <div class="chart-box"><canvas id="ncRevChart"></canvas></div>
+    </div>
+  </div>
+  <div class="g2" style="margin-top:14px;">
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">일별 누적 건수</div>
+      <div class="chart-box"><canvas id="ncCumChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">쿠폰별 건수 비중</div>
+      <div class="chart-box"><canvas id="ncPieChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
 <!-- Detail Table -->
 <div class="section">
   <div class="sec-head">
@@ -560,6 +589,73 @@ const ncData=[
   tot.innerHTML='<td class="row-label" style="color:#fff;">합계</td><td></td><td class="r" style="font-weight:800;color:#fff;">62</td><td class="r" style="font-weight:700;color:#fff;">8.20</td><td class="r" style="color:#fff;">132,258</td>';
   tb.appendChild(tot);
 })();
+
+// ======= NEW COUPON DAILY TREND CHARTS =======
+// Data structure: add new days as they come. Each day = {date, c16264, c16265, c16266, c16267, c16268, c16269, c16270, c16271}
+const ncDays = [
+  {date:'3/26', c16264:30, c16265:15, c16266:8, c16267:6, c16268:2, c16269:0, c16270:0, c16271:0,
+   r16264:3.26, r16265:2.13, r16266:1.32, r16267:1.02, r16268:0.37, r16269:0, r16270:0, r16271:0},
+  // === 아래에 새 날짜 추가 ===
+  // {date:'3/27', c16264:??, c16265:??, ...},
+];
+
+const ncLabels = ncDays.map(d=>d.date);
+const ncColors = {
+  '2일109K':'#60a5fa','2일139K':'#3b82f6','3일149K':'#22c55e','3일179K':'#16a34a',
+  '4일179K':'#facc15','4일209K':'#f59e0b','5일219K':'#ef4444','5일249K':'#dc2626'
+};
+const ncSeries = [
+  {key:'c16264',rkey:'r16264',label:'2일 109K',color:'#60a5fa'},
+  {key:'c16265',rkey:'r16265',label:'2일 139K',color:'#3b82f6'},
+  {key:'c16266',rkey:'r16266',label:'3일 149K',color:'#22c55e'},
+  {key:'c16267',rkey:'r16267',label:'3일 179K',color:'#16a34a'},
+  {key:'c16268',rkey:'r16268',label:'4일 179K',color:'#facc15'},
+  {key:'c16269',rkey:'r16269',label:'4일 209K',color:'#f59e0b'},
+  {key:'c16270',rkey:'r16270',label:'5일 219K',color:'#ef4444'},
+  {key:'c16271',rkey:'r16271',label:'5일 249K',color:'#dc2626'},
+];
+
+const ncChartOpts = {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#666',font:{size:9},usePointStyle:true,pointStyle:'circle'}}},scales:{x:{ticks:{color:'#444',font:{size:10}},grid:{color:'#16181f'},stacked:true},y:{ticks:{color:'#444',font:{size:10}},grid:{color:'#1a1c26'},stacked:true}}};
+
+// Daily count (stacked bar)
+new Chart(document.getElementById('ncCntChart'),{
+  type:'bar',
+  data:{labels:ncLabels,datasets:ncSeries.filter(s=>ncDays.some(d=>d[s.key]>0)).map(s=>({
+    label:s.label, data:ncDays.map(d=>d[s.key]), backgroundColor:s.color, borderRadius:2, barPercentage:.7
+  }))},
+  options:ncChartOpts
+});
+
+// Daily revenue (stacked bar)
+new Chart(document.getElementById('ncRevChart'),{
+  type:'bar',
+  data:{labels:ncLabels,datasets:ncSeries.filter(s=>ncDays.some(d=>d[s.rkey]>0)).map(s=>({
+    label:s.label, data:ncDays.map(d=>d[s.rkey]), backgroundColor:s.color, borderRadius:2, barPercentage:.7
+  }))},
+  options:{...ncChartOpts,scales:{...ncChartOpts.scales,y:{...ncChartOpts.scales.y,ticks:{...ncChartOpts.scales.y.ticks,callback:v=>v+'M'}}}}
+});
+
+// Cumulative count (line)
+const cumData = ncSeries.filter(s=>ncDays.some(d=>d[s.key]>0)).map(s=>{
+  let cum=0;
+  return {label:s.label, data:ncDays.map(d=>{cum+=d[s.key];return cum;}), borderColor:s.color, backgroundColor:s.color+'18', fill:true, tension:.3, pointRadius:4, borderWidth:2};
+});
+new Chart(document.getElementById('ncCumChart'),{
+  type:'line',
+  data:{labels:ncLabels,datasets:cumData},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#666',font:{size:9},usePointStyle:true,pointStyle:'circle'}}},scales:{x:{ticks:{color:'#444',font:{size:10}},grid:{color:'#16181f'}},y:{ticks:{color:'#444',font:{size:10}},grid:{color:'#1a1c26'}}}}
+});
+
+// Pie chart (coupon share)
+const pieData = ncSeries.filter(s=>ncDays.reduce((a,d)=>a+d[s.key],0)>0);
+new Chart(document.getElementById('ncPieChart'),{
+  type:'doughnut',
+  data:{
+    labels:pieData.map(s=>s.label),
+    datasets:[{data:pieData.map(s=>ncDays.reduce((a,d)=>a+d[s.key],0)),backgroundColor:pieData.map(s=>s.color),borderWidth:0}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#888',font:{size:10},usePointStyle:true,pointStyle:'circle',padding:12}}}}
+});
 </script>
 </body>
 </html>
