@@ -19,6 +19,19 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}thead th{text-align:l
 .gauge-wrap{margin-top:14px}.gauge-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}.gauge-label{font-size:11px;min-width:80px}.gauge-bar{flex:1;height:7px;background:#0c0e14;border-radius:4px;overflow:hidden}.gauge-fill{height:100%;border-radius:4px}.gauge-val{font-size:12px;font-weight:700;min-width:55px;text-align:right}
 .scenario{background:#14161e;border-radius:12px;padding:20px;border:1px solid #1e2130;position:relative;overflow:hidden}.scenario::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}.scenario.s-red::before{background:#ef4444}.scenario.s-yellow::before{background:#facc15}.scenario.s-green::before{background:#22c55e}.scenario.active{border-color:rgba(239,68,68,0.4);box-shadow:0 0 24px rgba(239,68,68,0.05)}.s-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.s-label{font-size:11px;font-weight:700;letter-spacing:.8px}.s-status{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}.s-metric{font-size:26px;font-weight:800;margin:6px 0}.s-desc{font-size:12px;color:#888;line-height:1.6}.s-action{margin-top:10px;padding:10px;background:rgba(255,255,255,0.02);border-radius:6px;font-size:12px;color:#aaa;line-height:1.6}.s-action strong{color:#ddd}
 .transform{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch;margin-bottom:16px}.t-side{padding:20px;border-radius:12px}.t-side.old{background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.12)}.t-side.new{background:rgba(34,197,94,0.04);border:1px solid rgba(34,197,94,0.12)}.t-arrow{display:flex;align-items:center;justify-content:center;font-size:20px;color:#444}.t-side h4{font-size:13px;font-weight:700;margin-bottom:10px}.t-side p,.t-side ul{font-size:12px;color:#aaa;line-height:1.8}.t-side ul{padding-left:16px}.t-side li strong{color:#fff}
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:28px;border-bottom:1px solid #1e2130;padding-bottom:0}
+.tab-btn{font-family:inherit;font-size:13px;font-weight:600;padding:10px 20px;background:none;border:none;color:#555;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab-btn:hover{color:#888}
+.tab-btn.active{color:#fff;border-bottom-color:#60a5fa}
+.tab-panel{display:none}.tab-panel.active{display:block}
+/* New coupon monitor */
+.nc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.nc-card{background:#14161e;border-radius:12px;padding:16px;border:1px solid #1e2130;text-align:center}
+.nc-card .nc-name{font-size:11px;color:#aaa;margin-bottom:8px;font-weight:600}
+.nc-card .nc-cnt{font-size:28px;font-weight:800;color:#fff}
+.nc-card .nc-sub{font-size:10px;color:#555;margin-top:4px}
+.nc-card.zero{opacity:.4}
 .footer{text-align:center;color:#333;font-size:10px;margin-top:48px;padding-top:14px;border-top:1px solid #1a1c26}
 </style>
 </head>
@@ -27,11 +40,20 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}thead th{text-align:l
 <div class="header">
   <h1>얼리버드 판매 전략 리포트</h1>
   <div class="meta">
-    <div class="date">데이터 기준: 2026.01.01 ~ 2026.03.24 (반납 기준)</div>
-    <div class="update">마지막 갱신: 2026.03.25 09:00</div>
+    <div class="date">데이터 기준: 2026.01.01 ~ 2026.03.25 (반납 기준)</div>
+    <div class="update">마지막 갱신: 2026.03.26</div>
   </div>
 </div>
 <div class="divider"></div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('report')">얼리버드 리포트</button>
+  <button class="tab-btn" onclick="switchTab('newcoupon')">신규 미리예약 모니터링</button>
+</div>
+
+<!-- TAB 1 -->
+<div class="tab-panel active" id="tab-report">
 
 <!-- Executive Summary -->
 <div class="exec-summary">
@@ -374,13 +396,106 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}thead th{text-align:l
   </div>
 </div>
 
+</div><!-- end tab-report -->
+
+<!-- TAB 2: 신규 미리예약 모니터링 -->
+<div class="tab-panel" id="tab-newcoupon">
+
+<div class="exec-summary">
+  <div class="exec-card verdict">
+    <h2>신규 미리예약 쿠폰 현황</h2>
+    <div class="big-num blue">62건</div>
+    <p>
+      2026.03.26 런칭. <strong>8종 쿠폰</strong> (2일~5일, 주중/주말 가격 차등).<br>
+      <strong>2일 109,000원</strong>이 31건(50%)으로 가장 인기.<br>
+      4일 209,000원 이상은 아직 <strong class="red">0건</strong>.
+    </p>
+  </div>
+  <div class="exec-card action">
+    <h2>건당 Net 매출 (rent+PF-할인)</h2>
+    <div class="big-num green">132,258원</div>
+    <p>
+      쿠폰 액면가에 근접한 수준.<br>
+      평균 리드타임 <strong>~15일</strong> (4월 첫째/둘째주 주말 집중).<br>
+      <strong>Net 매출 = rent_amt + pf_amt - enuri</strong>
+    </p>
+  </div>
+</div>
+
+<!-- Coupon Cards -->
+<div class="section">
+  <div class="sec-head">
+    <h2>쿠폰별 생성 현황</h2>
+    <span class="tag tag-blue">3/26 런칭일</span>
+  </div>
+  <div class="nc-grid">
+    <div class="nc-card"><div class="nc-name">미리예약 2일<br><span class="blue">109,000원</span> (주중)</div><div class="nc-cnt blue">31</div><div class="nc-sub">Net 108,736원/건 | 3.26M</div></div>
+    <div class="nc-card"><div class="nc-name">미리예약 2일<br><span class="blue">139,000원</span> (주말)</div><div class="nc-cnt blue">15</div><div class="nc-sub">Net 141,739원/건 | 2.13M</div></div>
+    <div class="nc-card"><div class="nc-name">미리예약 3일<br><span class="blue">149,000원</span> (주중)</div><div class="nc-cnt">8</div><div class="nc-sub">Net 165,530원/건 | 1.32M</div></div>
+    <div class="nc-card"><div class="nc-name">미리예약 3일<br><span class="blue">179,000원</span> (주말)</div><div class="nc-cnt">6</div><div class="nc-sub">Net 170,021원/건 | 1.02M</div></div>
+  </div>
+  <div class="nc-grid">
+    <div class="nc-card"><div class="nc-name">미리예약 4일<br><span class="blue">179,000원</span> (주중)</div><div class="nc-cnt">2</div><div class="nc-sub">Net 185,127원/건 | 0.37M</div></div>
+    <div class="nc-card zero"><div class="nc-name">미리예약 4일<br><span class="yellow">209,000원</span> (주말)</div><div class="nc-cnt gray">0</div><div class="nc-sub">미판매</div></div>
+    <div class="nc-card zero"><div class="nc-name">미리예약 5일<br><span class="yellow">219,000원</span> (주중)</div><div class="nc-cnt gray">0</div><div class="nc-sub">미판매</div></div>
+    <div class="nc-card zero"><div class="nc-name">미리예약 5일<br><span class="yellow">249,000원</span> (주말)</div><div class="nc-cnt gray">0</div><div class="nc-sub">미판매</div></div>
+  </div>
+</div>
+
+<!-- Detail Table -->
+<div class="section">
+  <div class="sec-head">
+    <h2>일별 생성 상세</h2>
+    <span class="tag tag-blue">생성일 기준</span>
+    <span class="sec-sub">Net = rent_amt + pf_amt - enuri</span>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>생성일</th><th>쿠폰</th><th class="r">건수</th><th class="r">Net 매출(백만)</th><th class="r">건당 Net</th></tr></thead>
+      <tbody id="ncTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 출발일 분포 -->
+<div class="section">
+  <div class="sec-head">
+    <h2>출발 주차별 분포</h2>
+    <span class="tag tag-green">DEMAND</span>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;">출발일 집중도</div>
+      <div class="gauge-wrap">
+        <div class="gauge-row"><div class="gauge-label blue">4/2~4/6 (1주차)</div><div class="gauge-bar"><div class="gauge-fill" style="width:45%;background:#60a5fa;"></div></div><div class="gauge-val blue">28건 (45%)</div></div>
+        <div class="gauge-row"><div class="gauge-label">4/8~4/14 (2주차)</div><div class="gauge-bar"><div class="gauge-fill" style="width:31%;background:#3b82f6;"></div></div><div class="gauge-val">19건 (31%)</div></div>
+        <div class="gauge-row"><div class="gauge-label gray">4/17~4/20 (3주차)</div><div class="gauge-bar"><div class="gauge-fill" style="width:11%;background:#555;"></div></div><div class="gauge-val gray">7건 (11%)</div></div>
+        <div class="gauge-row"><div class="gauge-label gray">4/24~4/27 (4주차)</div><div class="gauge-bar"><div class="gauge-fill" style="width:13%;background:#555;"></div></div><div class="gauge-val gray">8건 (13%)</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;">핵심 관찰</div>
+      <div style="font-size:12px;color:#bbb;line-height:1.8;">
+        <strong class="blue">2일 109,000원이 50%</strong> — 가격 민감 수요 확인<br>
+        <strong class="yellow">4일 이상(209K~249K)은 0건</strong> — 가격 높거나 인지 부족<br>
+        <strong>평균 리드타임 ~15일</strong> — "미리예약" 컨셉에 부합<br>
+        <strong>4/4(토) 출발이 최다</strong> — 주말 수요 집중<br>
+        <br>
+        <span style="color:#facc15;">내일(3/27) 이후 일별 추이 관찰 필요</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-newcoupon -->
+
 <div class="footer">socar-data.socar_biz_profit.profit_socar_reservation (반납 기준) | Auto-refresh: 매일 09:00 KST</div>
 
 <!-- Charts -->
 <script>
 const W=['W1\n1/1','W2\n1/5','W3\n1/12','W4\n1/19','W5\n1/26','W6\n2/2','W7\n2/9','W8\n2/16','W9\n2/23','W10\n3/2','W11\n3/9','W12\n3/16','W13\n3/23'];
-const eb={cnt:[787,598,763,888,840,928,4477,2671,1583,264,281,485,124],rev:[1.55,0.97,1.27,1.43,1.37,1.44,5.76,5.58,2.23,0.52,0.49,0.86,0.21],cm:[1.04,0.64,0.85,0.94,0.91,0.93,3.59,4.03,1.46,0.39,0.33,0.60,0.15],pft:[0.46,0.27,0.35,0.38,0.39,0.41,1.54,2.04,0.61,0.19,0.16,0.30,0.07]};
-const sd={cnt:[838,2754,3109,4589,3033,3027,2575,1991,2932,1795,2203,2408,402],rev:[0.34,1.06,1.21,1.68,1.15,1.17,0.95,0.81,1.21,0.73,0.90,0.99,0.15],cm:[0.17,0.54,0.62,0.84,0.60,0.62,0.48,0.45,0.66,0.39,0.45,0.51,0.07],pft:[-0.13,-0.28,-0.44,-0.63,-0.37,-0.28,-0.22,-0.21,-0.27,-0.22,-0.26,-0.28,-0.03]};
+const eb={cnt:[787,598,763,888,840,928,4477,2671,1583,264,281,485,164],rev:[1.55,0.97,1.27,1.43,1.37,1.44,5.76,5.58,2.23,0.52,0.49,0.86,0.29],cm:[1.04,0.64,0.85,0.94,0.91,0.93,3.59,4.03,1.46,0.39,0.33,0.60,0.20],pft:[0.46,0.27,0.35,0.38,0.39,0.41,1.54,2.04,0.61,0.19,0.16,0.30,0.10]};
+const sd={cnt:[838,2754,3109,4589,3033,3027,2575,1991,2932,1795,2203,2408,597],rev:[0.34,1.06,1.21,1.68,1.15,1.17,0.95,0.81,1.21,0.73,0.90,0.99,0.22],cm:[0.17,0.54,0.62,0.84,0.60,0.62,0.48,0.45,0.66,0.39,0.45,0.51,0.10],pft:[-0.13,-0.28,-0.44,-0.63,-0.37,-0.28,-0.22,-0.21,-0.27,-0.22,-0.26,-0.28,-0.04]};
 
 // GPM = profit/revenue
 const ebGPM=eb.pft.map((v,i)=>eb.rev[i]>0?+(v/eb.rev[i]*100).toFixed(1):0);
@@ -415,6 +530,36 @@ new Chart(document.getElementById('cmChart'),{type:'line',data:{labels:W,dataset
   {label:'미리예약',data:ebCM,borderColor:C.eb,backgroundColor:C.ebB,fill:true,tension:.3,pointRadius:3,borderWidth:2},
   {label:'당일최저가',data:sdCM,borderColor:C.sd,backgroundColor:C.sdB,fill:true,tension:.3,pointRadius:3,borderWidth:2}
 ]},options:{...O,scales:{...O.scales,y:{...O.scales.y,min:30,max:80,ticks:{...O.scales.y.ticks,callback:v=>v+'%'}}}}});
+
+// Tab switching
+function switchTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// New coupon table
+const ncData=[
+  {d:'2026-03-26',name:'미리예약 2일 109,000원',cnt:30,net:3.26,per:'108,736'},
+  {d:'2026-03-26',name:'미리예약 2일 139,000원',cnt:15,net:2.13,per:'141,739'},
+  {d:'2026-03-26',name:'미리예약 3일 149,000원',cnt:8,net:1.32,per:'165,530'},
+  {d:'2026-03-26',name:'미리예약 3일 179,000원',cnt:6,net:1.02,per:'170,021'},
+  {d:'2026-03-26',name:'미리예약 4일 179,000원',cnt:2,net:0.37,per:'185,127'},
+];
+(function(){
+  const tb=document.getElementById('ncTable');
+  ncData.forEach(d=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="row-label">'+d.d+'</td><td>'+d.name+'</td><td class="r" style="font-weight:700;color:#60a5fa;">'+d.cnt+'</td><td class="r">'+d.net+'</td><td class="r">'+d.per+'</td>';
+    tb.appendChild(tr);
+  });
+  // Total row
+  const tot=document.createElement('tr');
+  tot.className='row-highlight';
+  tot.innerHTML='<td class="row-label" style="color:#fff;">합계</td><td></td><td class="r" style="font-weight:800;color:#fff;">62</td><td class="r" style="font-weight:700;color:#fff;">8.20</td><td class="r" style="color:#fff;">132,258</td>';
+  tb.appendChild(tot);
+})();
 </script>
 </body>
 </html>
