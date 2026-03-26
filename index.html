@@ -63,8 +63,8 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}thead th{text-align:l
 
 <!-- Tabs -->
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('report')">얼리버드 리포트</button>
-  <button class="tab-btn" onclick="switchTab('newcoupon')">4월 얼리버드 모니터링</button>
+  <button class="tab-btn active" onclick="switchTab('report',this)">얼리버드 리포트</button>
+  <button class="tab-btn" onclick="switchTab('newcoupon',this)">4월 얼리버드 모니터링</button>
 </div>
 
 <!-- TAB 1 -->
@@ -603,11 +603,11 @@ function doRefresh(){
 }
 
 // Tab switching
-function switchTab(id){
+function switchTab(id,btn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
-  event.target.classList.add('active');
+  btn.classList.add('active');
 }
 
 // New coupon table
