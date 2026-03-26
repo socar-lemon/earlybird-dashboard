@@ -455,32 +455,16 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}thead th{text-align:l
   </div>
 </div>
 
-<!-- Daily Trend Charts -->
+<!-- Daily Trend Chart -->
 <div class="section">
   <div class="sec-head">
     <h2>일별 생성 추이</h2>
     <span class="tag tag-blue">DAILY TREND</span>
-    <span class="sec-sub">생성일 기준 | 일별 누적 갱신</span>
+    <span class="sec-sub">생성일 기준 | 쿠폰별 스택 바</span>
   </div>
-  <div class="g2">
-    <div class="card">
-      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">일별 생성 건수 (쿠폰별)</div>
-      <div class="chart-box"><canvas id="ncCntChart"></canvas></div>
-    </div>
-    <div class="card">
-      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">일별 Net 매출 (백만원)</div>
-      <div class="chart-box"><canvas id="ncRevChart"></canvas></div>
-    </div>
-  </div>
-  <div class="g2" style="margin-top:14px;">
-    <div class="card">
-      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">일별 누적 건수</div>
-      <div class="chart-box"><canvas id="ncCumChart"></canvas></div>
-    </div>
-    <div class="card">
-      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">쿠폰별 건수 비중</div>
-      <div class="chart-box"><canvas id="ncPieChart"></canvas></div>
-    </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">일별 생성 건수 (쿠폰별)</div>
+    <div class="chart-box" style="height:320px"><canvas id="ncCntChart"></canvas></div>
   </div>
 </div>
 
@@ -651,36 +635,6 @@ new Chart(document.getElementById('ncCntChart'),{
   options:ncChartOpts
 });
 
-// Daily revenue (stacked bar)
-new Chart(document.getElementById('ncRevChart'),{
-  type:'bar',
-  data:{labels:ncLabels,datasets:ncSeries.filter(s=>ncDays.some(d=>d[s.rkey]>0)).map(s=>({
-    label:s.label, data:ncDays.map(d=>d[s.rkey]), backgroundColor:s.color, borderRadius:2, barPercentage:.7
-  }))},
-  options:{...ncChartOpts,scales:{...ncChartOpts.scales,y:{...ncChartOpts.scales.y,ticks:{...ncChartOpts.scales.y.ticks,callback:v=>v+'M'}}}}
-});
-
-// Cumulative count (line)
-const cumData = ncSeries.filter(s=>ncDays.some(d=>d[s.key]>0)).map(s=>{
-  let cum=0;
-  return {label:s.label, data:ncDays.map(d=>{cum+=d[s.key];return cum;}), borderColor:s.color, backgroundColor:s.color+'18', fill:true, tension:.3, pointRadius:4, borderWidth:2};
-});
-new Chart(document.getElementById('ncCumChart'),{
-  type:'line',
-  data:{labels:ncLabels,datasets:cumData},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#666',font:{size:9},usePointStyle:true,pointStyle:'circle'}}},scales:{x:{ticks:{color:'#444',font:{size:10}},grid:{color:'#16181f'}},y:{ticks:{color:'#444',font:{size:10}},grid:{color:'#1a1c26'}}}}
-});
-
-// Pie chart (coupon share)
-const pieData = ncSeries.filter(s=>ncDays.reduce((a,d)=>a+d[s.key],0)>0);
-new Chart(document.getElementById('ncPieChart'),{
-  type:'doughnut',
-  data:{
-    labels:pieData.map(s=>s.label),
-    datasets:[{data:pieData.map(s=>ncDays.reduce((a,d)=>a+d[s.key],0)),backgroundColor:pieData.map(s=>s.color),borderWidth:0}]
-  },
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#888',font:{size:10},usePointStyle:true,pointStyle:'circle',padding:12}}}}
-});
 </script>
 </body>
 </html>
